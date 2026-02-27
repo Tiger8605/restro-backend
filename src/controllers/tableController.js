@@ -1,4 +1,5 @@
 const Table = require("../models/tableModel");
+const Order = require("../models/orderModel");
 
 /**
  * helper: find the smallest missing table number for this owner
@@ -98,12 +99,22 @@ exports.getTables = async (req, res) => {
 
     const tables = await Table.find({ ownerId }).sort({ createdAt: -1 }).lean();
 
+    // ✅ Find active orders
+    const activeOrders = await Order.find({
+      ownerId,
+      status: "active",
+    })
+      .select("tableId")
+      .lean();
+
+    const occupiedSet = new Set(
+      activeOrders.map((o) => String(o.tableId))
+    );
+
     const data = tables.map((t) => ({
       _id: t._id,
       tableNumber: t.tableNumber,
-      qrValue: `${process.env.CUSTOMER_APP_URL}/menu?tableId=${t._id}`,
-      isActive: t.isActive,
-      createdAt: t.createdAt,
+      occupied: occupiedSet.has(String(t._id)), // ✅ important
     }));
 
     return res.json({ success: true, data });

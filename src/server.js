@@ -6,7 +6,8 @@ const connectDB = require("./config/db");
 
 const adminAuthRoutes = require("./routes/adminAuthRoute"); 
 const tableRoutes = require("./routes/tableRoute");
-const menuRoutes= require("./routes/menuRoute");
+const orderRoutes = require("./routes/orderRoute");
+const menuRoutes = require ("./routes/menuRoute")
 
 
 const { errorHandler } = require("./middleware/errorMiddleware");
@@ -27,9 +28,10 @@ app.get("/", (req, res) => res.send("API Running ✅"));
 
 
 // 👇 Admin routes
-app.use("/api/admin", adminAuthRoutes); 
+app.use("/api/admin", adminAuthRoutes); // ✅ ADD THIS
 app.use("/api/tables", tableRoutes);
-app.use("/api/menu",menuRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/menu", menuRoutes)
 
 app.use(errorHandler);
 
